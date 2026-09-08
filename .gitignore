@@ -1,0 +1,7 @@
+# Local runtime config (contains your domain — keep out of VCS if it differs from .env.example)
+.env
+
+# Deploy staging artifacts
+*.bak
+revamp-preview.jpg
+reference-images/
