@@ -8,6 +8,8 @@ const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Keep libsql native binaries external so standalone tracing includes all platform packages
+  serverExternalPackages: ['@payloadcms/db-sqlite', '@payloadcms/drizzle', 'libsql', '@libsql/client'],
   images: {
     localPatterns: [
       {
