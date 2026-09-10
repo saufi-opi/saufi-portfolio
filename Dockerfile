@@ -14,7 +14,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PAYLOAD_SECRET=build-placeholder
 ENV DATABASE_URI=file:./data/build-placeholder.db
 ENV MEDIA_DIR=data/build-media
-RUN npm run build && rm -rf data
+RUN mkdir -p data && npm run build && rm -rf data
 
 FROM node:22-alpine AS runner
 WORKDIR /app
