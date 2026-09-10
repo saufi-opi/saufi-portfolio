@@ -1,0 +1,2 @@
+/* Ported from v3 static (design tokens + components) */
+.fade-in, .h-anim { opacity: 1 !important; transform: none !important; animation: none !important; } #progress, #particles { display: none; }
