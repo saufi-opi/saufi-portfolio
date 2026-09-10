@@ -78,6 +78,7 @@ export function TiltGlow() {
 
 export function Accordion() {
   useEffect(() => {
+    const cleanups: Array<() => void> = []
     const items = Array.from(document.querySelectorAll<HTMLElement>('.acc-item'))
     items.forEach((item, i) => {
       const head = item.querySelector<HTMLButtonElement>('.acc-head')
@@ -87,7 +88,7 @@ export function Accordion() {
       item.dataset.open = String(open)
       head.setAttribute('aria-expanded', String(open))
       panel.style.height = open ? 'auto' : '0'
-      const listener = () => {
+      const onToggle = () => {
         const next = item.dataset.open !== 'true'
         item.dataset.open = String(next)
         head.setAttribute('aria-expanded', String(next))
@@ -95,26 +96,10 @@ export function Accordion() {
         if (!next) requestAnimationFrame(() => { panel.style.height = '0' })
         else panel.addEventListener('transitionend', () => { panel.style.height = 'auto' }, { once: true })
       }
-      head.addEventListener('click', listener(item, head, panel))
+      head.addEventListener('click', onToggle)
+      cleanups.push(() => head.removeEventListener('click', onToggle))
     })
-
-    function listener(item: HTMLElement, head: HTMLButtonElement, panel: HTMLElement) {
-      return () => {
-        const next = item.dataset.open !== 'true'
-        item.dataset.open = String(next)
-        head.setAttribute('aria-expanded', String(next))
-        panel.style.height = panel.scrollHeight + 'px'
-        if (!next) requestAnimationFrame(() => { panel.style.height = '0' })
-        else panel.addEventListener('transitionend', () => { panel.style.height = 'auto' }, { once: true })
-      }
-    }
-
-    return () => {
-      items.forEach((item) => {
-        const head = item.querySelector('.acc-head')
-        if (head) head.replaceWith(head.cloneNode(true))
-      })
-    }
+    return () => cleanups.forEach((fn) => fn())
   }, [])
   return null
 }

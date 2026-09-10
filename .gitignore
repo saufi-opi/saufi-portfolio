@@ -31,5 +31,5 @@ pnpm-debug.log*
 # payload runtime data (sqlite db + uploaded media) — never in VCS
 /data/
 
-# payload generated types (regenerated via pnpm generate:types)
+# payload generated types (regenerated via npm run generate:types)
 /payload-types.ts

@@ -76,7 +76,7 @@ export default async function Home() {
                 <h3 className="service-title">{svc.title}</h3>
                 <p className="service-desc">{svc.description}</p>
                 <div className="service-tags">
-                  {svc.tags?.map((t, i) => <span key={i} className="tag">{t.tag}</span>)}
+                  {svc.tags?.map((t: { tag: string }, i: number) => <span key={i} className="tag">{t.tag}</span>)}
                 </div>
               </div>
             ))}
@@ -133,7 +133,7 @@ export default async function Home() {
                 </div>
                 <div className="skill-divider" />
                 <div className="skill-tags">
-                  {sk.tags?.map((t, i) => <span key={i} className="tag">{t.tag}</span>)}
+                  {sk.tags?.map((t: { tag: string }, i: number) => <span key={i} className="tag">{t.tag}</span>)}
                 </div>
               </div>
             ))}
@@ -162,7 +162,7 @@ export default async function Home() {
                   <p className="project-desc">{p.description}</p>
                   {p.tags && p.tags.length > 0 && (
                     <div className="project-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
-                      {p.tags.map((t, i) => <span key={i} className="tag">{t.tag}</span>)}
+                      {p.tags.map((t: { tag: string }, i: number) => <span key={i} className="tag">{t.tag}</span>)}
                     </div>
                   )}
                   <div className="project-links">

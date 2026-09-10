@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const Projects: CollectionConfig = {
   slug: 'projects',
   access: { read: () => true },
-  admin: { useAsTitle: 'title', defaultSort: 'order' },
+  admin: { useAsTitle: 'title' },
   fields: [
     { name: 'title', type: 'text', required: true },
     { name: 'path', type: 'text', required: true, admin: { description: 'Paparan meta path, cth: ./projects/rag-platform' } },

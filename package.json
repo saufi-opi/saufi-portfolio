@@ -6,15 +6,15 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "seed": "tsx src/seed.ts",
-    "generate:types": "payload generate:types"
+    "generate:types": "payload generate:types",
+    "seed": "node scripts/seed.mjs"
   },
   "dependencies": {
     "@payloadcms/db-sqlite": "^3.88.0",
     "@payloadcms/next": "^3.88.0",
     "@payloadcms/richtext-lexical": "^3.88.0",
-    "graphql": "^17.0.2",
-    "next": "^15.5.25",
+    "graphql": "^16.14.2",
+    "next": "^15.4.11",
     "payload": "^3.88.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -26,11 +26,5 @@
     "@types/react-dom": "^19.2.7",
     "tsx": "^4.23.13",
     "typescript": "^5.9.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "sharp"
-    ]
   }
 }

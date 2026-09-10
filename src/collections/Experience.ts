@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const Experience: CollectionConfig = {
   slug: 'experience',
   access: { read: () => true },
-  admin: { useAsTitle: 'role', defaultSort: 'order' },
+  admin: { useAsTitle: 'role' },
   fields: [
     { name: 'role', type: 'text', required: true },
     { name: 'company', type: 'text', required: true },

@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const SkillCategories: CollectionConfig = {
   slug: 'skill-categories',
   access: { read: () => true },
-  admin: { useAsTitle: 'title', defaultSort: 'order' },
+  admin: { useAsTitle: 'title' },
   fields: [
     { name: 'title', type: 'text', required: true },
     {

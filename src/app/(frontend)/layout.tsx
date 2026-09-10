@@ -15,6 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const s = await getSettings()
     const og = s?.ogImage && typeof s.ogImage === 'object' ? (s.ogImage as { url?: string }).url : undefined
     return {
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'https://saufi.loxikum.xyz'),
       title: s?.metaTitle || 'Ahmad Saufi | Software & AI Engineer',
       description: s?.metaDescription || undefined,
       openGraph: {
