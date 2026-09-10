@@ -25,6 +25,10 @@ RUN apk add --no-cache sqlite && addgroup -S nodejs && adduser -S nextjs -G node
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
+# libsql resolves its platform binary dynamically at runtime — copy ALL @libsql platform
+# packages from deps (alpine npm ci installed linux-x64-musl there)
+COPY --from=deps /app/node_modules/@libsql ./node_modules/@libsql
+COPY --from=deps /app/node_modules/libsql ./node_modules/libsql
 # Bundled seed (schema + content + admin + media) for first-boot volume init
 COPY --from=build /app/seed-data /app/seed
 COPY scripts/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
