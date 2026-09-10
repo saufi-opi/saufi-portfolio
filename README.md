@@ -1,6 +1,6 @@
 # Ahmad Saufi — Portfolio (saufi.loxikum.xyz)
 
-Single-page developer portfolio. Plain HTML/CSS/JS (no framework, no build step),
+Single-page Software & AI Engineer portfolio. Plain HTML/CSS/JS (no framework, no build step),
 served by nginx in Docker, routed by Traefik + Cloudflare Tunnel.
 
 **Live:** https://saufi.loxikum.xyz
