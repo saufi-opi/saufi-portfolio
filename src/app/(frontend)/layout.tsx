@@ -39,11 +39,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`${display.variable} ${body.variable}`}>
-      <div className="grain" aria-hidden="true" />
-      <Nav />
-      {children}
-      <Footer />
-    </div>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
+      <body>
+        <div className="grain" aria-hidden="true" />
+        <Nav />
+        {children}
+        <Footer />
+      </body>
+    </html>
   )
 }
