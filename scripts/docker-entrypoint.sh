@@ -1,5 +1,5 @@
 #!/bin/sh
-# Entrypoint: seed volume on first boot, then start server.
+# Entrypoint: seed volume on first boot + fix perms, then start server.
 set -e
 
 if [ ! -s /app/data/payload.db ]; then
@@ -7,8 +7,10 @@ if [ ! -s /app/data/payload.db ]; then
   mkdir -p /app/data/media
   cp /app/seed/payload.db /app/data/payload.db
   cp -r /app/seed/media/. /app/data/media/ 2>/dev/null || true
-  chown -R nextjs:nodejs /app/data
   echo "[entrypoint] seeded"
 fi
+
+# sqlite needs write access; volume may be owned by host uid (1000)
+chown -R nextjs:nodejs /app/data 2>/dev/null || true
 
 exec node server.js
