@@ -7,6 +7,9 @@ import { CountUp, TiltGlow, Accordion } from '@/components/anim'
 import { Icon } from '@/components/Icon'
 
 export const revalidate = 60
+// Prerender at build needs a live DB; in CI there's no seeded data.
+// Dynamic rendering + ISR(60) gives the same edit-propagation behaviour without a build-time DB dependency.
+export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   const [s, services, skills, projects, experience] = await Promise.all([
