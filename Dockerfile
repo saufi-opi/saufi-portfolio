@@ -14,7 +14,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PAYLOAD_SECRET=build-placeholder
 ENV DATABASE_URI=file:./data/build-placeholder.db
 ENV MEDIA_DIR=data/build-media
-RUN mkdir -p data && npm run build && rm -rf data
+# build needs ./data to exist; the SEEDED db (repo data/) is preserved separately for first-boot
+RUN cp -r data /app/seed-data && rm -rf data && mkdir -p data && npm run build
 
 FROM node:22-alpine AS runner
 WORKDIR /app
@@ -24,7 +25,10 @@ RUN apk add --no-cache sqlite && addgroup -S nodejs && adduser -S nextjs -G node
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
-RUN mkdir -p /app/data && chown -R nextjs:nodejs /app
+# Bundled seed (schema + content + admin + media) for first-boot volume init
+COPY --from=build /app/seed-data /app/seed
+COPY scripts/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh && mkdir -p /app/data && chown -R nextjs:nodejs /app
 USER nextjs
 EXPOSE 3000
-CMD ["node", "server.js"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
