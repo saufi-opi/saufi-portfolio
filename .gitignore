@@ -1,7 +1,35 @@
-# Local runtime config (contains your domain — keep out of VCS if it differs from .env.example)
-.env
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Deploy staging artifacts
-*.bak
-revamp-preview.jpg
-reference-images/
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# local env files
+.env
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# payload runtime data (sqlite db + uploaded media) — never in VCS
+/data/
+
+# payload generated types (regenerated via npm run generate:types)
+/payload-types.ts
