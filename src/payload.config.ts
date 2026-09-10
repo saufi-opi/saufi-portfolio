@@ -1,6 +1,7 @@
 import { buildConfig } from 'payload'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import sharp from 'sharp'
 import path from 'path'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
@@ -23,6 +24,7 @@ export default buildConfig({
   }),
   cors: [serverUrl],
   csrf: [serverUrl],
+  sharp,
   upload: {
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   },
