@@ -17,6 +17,7 @@ export const Projects: CollectionConfig = {
     { name: 'image', type: 'upload', relationTo: 'media', required: true },
     { name: 'imageAlt', type: 'text', required: true },
     { name: 'bannerStyle', type: 'select', defaultValue: 'ink', options: ['ink', 'lime'], admin: { description: 'Warna latar banner' } },
+    { name: 'size', type: 'select', defaultValue: 'normal', options: ['normal', 'wide', 'tall'], admin: { description: 'Bento layout only: wide = spans 2 columns, tall = spans 2 rows. Ignored in grid/list layouts.' } },
     { name: 'demoUrl', type: 'text' },
     { name: 'codeUrl', type: 'text' },
     { name: 'order', type: 'number', defaultValue: 10 },

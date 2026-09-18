@@ -419,7 +419,7 @@ body.nav-open .nav-links {
 
 /* ===== 04 PROJECTS ===== */
 #projects { background: var(--cream); }
-.projects-grid { display: grid; grid-template-columns: 1fr; gap: var(--s-4); }
+.projects-grid { display: grid; grid-template-columns: repeat(var(--cols-mobile, 1), 1fr); gap: var(--s-4); }
 .project-card { padding: var(--s-4); }
 .project-banner { height: 200px; border-radius: var(--r-sm); overflow: hidden; position: relative; background: var(--ink-900); }
 .project-banner--lime { background: var(--lime); }
@@ -444,7 +444,28 @@ body.nav-open .nav-links {
 .project-card h3 { font-weight: 600; font-size: var(--fs-h3); margin-bottom: var(--s-2); }
 .project-card .project-desc { font-size: 0.9rem; color: var(--tx-on-light-mute); margin-bottom: var(--s-5); line-height: var(--lh-body); }
 .project-links { display: flex; gap: 10px; }
-@media (min-width: 768px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 768px) { .projects-grid { grid-template-columns: repeat(var(--cols-tablet, 2), 1fr); } }
+
+/* ===== 04b PROJECTS — ADMIN-CONFIGURABLE LAYOUT (additive) ===== */
+@media (min-width: 1024px) { .projects-grid { grid-template-columns: repeat(var(--cols-desktop, 2), 1fr); } }
+
+/* bento: spans only ≥768px — below 768 the grid is 1 column, so no reset needed */
+@media (min-width: 768px) {
+  .layout-bento .project-card.size-wide { grid-column: span 2; }
+  .layout-bento .project-card.size-tall { grid-row: span 2; }
+}
+
+/* list: compact single-column rows; banner small & left at ≥768px (kept visible —
+   image is a required field and rows would look bare without it) */
+.projects-grid.layout-list { grid-template-columns: 1fr; }
+@media (min-width: 768px) {
+  .layout-list .project-card { display: flex; flex-direction: row; align-items: stretch; gap: var(--s-4); }
+  .layout-list .project-banner { flex: 0 0 220px; height: auto; min-height: 160px; }
+  .layout-list .project-body { padding: var(--s-4) var(--s-2) var(--s-2); display: flex; flex-direction: column; }
+  .layout-list .project-meta { display: inline; margin-bottom: 0; margin-right: var(--s-2); }
+  .layout-list .project-card h3 { display: inline; font-size: 1rem; }
+  .layout-list .project-desc { margin-bottom: var(--s-4); }
+}
 
 /* ===== 05 TIMELINE ===== */
 #timeline { background: var(--cream-alt); }

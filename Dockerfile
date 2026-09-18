@@ -35,6 +35,7 @@ COPY --from=deps /app/node_modules/libsql ./node_modules/libsql
 # Bundled seed (schema + content + admin + media) for first-boot volume init
 COPY --from=build /app/seed-data /app/seed
 COPY scripts/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY scripts/migrate-layout.sql /app/scripts/migrate-layout.sql
 RUN chmod +x /usr/local/bin/entrypoint.sh && mkdir -p /app/data && chown -R nextjs:nodejs /app
 USER nextjs
 EXPOSE 3000

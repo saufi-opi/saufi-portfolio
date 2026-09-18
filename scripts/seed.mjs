@@ -139,11 +139,12 @@ async function main() {
           title: p.title, path: p.path, description: p.description,
           tags: p.tags.map((tag) => ({ tag })),
           image: mediaIds[p.image], imageAlt: p.imageAlt, bannerStyle: p.bannerStyle,
+          size: i === 0 ? 'wide' : 'normal',
           demoUrl: '#', codeUrl: '#', order: i + 1, published: true,
         },
       })
     }
-    console.log('seed: projects x4')
+    console.log('seed: projects x4 (first wide)')
   }
 
   if ((await totalDocs('experience')) === 0) {
