@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import type { CSSProperties } from 'react'
 import { getSettings, getServices, getSkills, getProjects, getExperience } from '@/lib/data'
 import ParticleNet from '@/components/ParticleNet'
 import Typewriter from '@/components/Typewriter'
@@ -25,6 +26,22 @@ export default async function Home() {
   const heroImg = typeof s.heroImage === 'object' ? s.heroImage : undefined
   const stats = s.stats || []
   const paragraphs = s.aboutParagraphs?.map((p) => p.text) || []
+
+  const pl = {
+    layout: s.projectsLayout?.layout || 'bento',
+    columnsDesktop: s.projectsLayout?.columnsDesktop || 2,
+    columnsTablet: s.projectsLayout?.columnsTablet || 2,
+    columnsMobile: s.projectsLayout?.columnsMobile || 1,
+  }
+  // Existing rows have no `size`. In bento, if NO project has a size set,
+  // treat the first published project (lowest order — getProjects sorts by order) as wide.
+  // Setting any explicit size (even 'normal') disables the fallback.
+  const noSizes = !projects.some((p) => p.size)
+  const sizeOf = (i: number): 'normal' | 'wide' | 'tall' => {
+    const own = projects[i].size
+    if (own) return own
+    return pl.layout === 'bento' && noSizes && i === 0 ? 'wide' : 'normal'
+  }
 
   return (
     <main>
@@ -152,9 +169,12 @@ export default async function Home() {
             <h2 className="two-tone">Projects <span className="arrow" aria-hidden="true">↗</span></h2>
             <p className="subtitle">Selected work across AI platforms and web applications.</p>
           </div>
-          <div className="projects-grid">
-            {projects.map((p) => (
-              <div key={p.id} className="card card--light project-card fade-in">
+          <div
+            className={`projects-grid layout-${pl.layout}`}
+            style={{ '--cols-desktop': pl.columnsDesktop, '--cols-tablet': pl.columnsTablet, '--cols-mobile': pl.columnsMobile } as CSSProperties}
+          >
+            {projects.map((p, i) => (
+              <div key={p.id} className={`card card--light project-card fade-in${pl.layout === 'bento' && sizeOf(i) !== 'normal' ? ` size-${sizeOf(i)}` : ''}`}>
                 <div className={`project-banner project-banner--${p.bannerStyle === 'lime' ? 'lime' : 'ink'}`}>
                   {p.image?.url && <img src={p.image.url} alt={p.imageAlt || p.title} width={1024} height={1024} loading="lazy" />}
                   <span className="badge-arrow" aria-hidden="true">↗</span>

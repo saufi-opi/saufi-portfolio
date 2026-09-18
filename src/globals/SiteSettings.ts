@@ -1,5 +1,11 @@
 import type { GlobalConfig } from 'payload'
 
+const bentoColumnsValidator = (value: unknown, { siblingData }: { siblingData?: Record<string, unknown> } = {}) => {
+  if (siblingData?.layout === 'bento' && (typeof value !== 'number' || value < 2))
+    return "Bento layout needs at least 2 columns (featured cards span 2)."
+  return true
+}
+
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: 'Site Settings',
@@ -88,6 +94,30 @@ export const SiteSettings: GlobalConfig = {
               labels: { singular: 'Word', plural: 'Marquee words' },
               defaultValue: [{ word: 'Code' }, { word: 'Train' }, { word: 'Deploy' }, { word: 'Ship' }],
               fields: [{ name: 'word', type: 'text', required: true }],
+            },
+          ],
+        },
+        {
+          label: 'Projects',
+          fields: [
+            {
+              name: 'projectsLayout',
+              type: 'group',
+              label: 'Projects Layout',
+              fields: [
+                { name: 'layout', type: 'select', required: true, defaultValue: 'bento', options: ['grid', 'bento', 'list'], admin: { description: 'bento: featured cards span wide/tall (needs ≥2 columns). list: compact rows.' } },
+                {
+                  name: 'columnsDesktop', type: 'number', defaultValue: 2, min: 1, max: 4,
+                  validate: bentoColumnsValidator,
+                  admin: { description: 'Desktop ≥1024px (grid & bento). Bento needs ≥2.' },
+                },
+                {
+                  name: 'columnsTablet', type: 'number', defaultValue: 2, min: 1, max: 3,
+                  validate: bentoColumnsValidator,
+                  admin: { description: 'Tablet ≥768px (grid & bento). Bento needs ≥2.' },
+                },
+                { name: 'columnsMobile', type: 'number', defaultValue: 1, min: 1, max: 1, admin: { description: 'Mobile is fixed at 1 column' } },
+              ],
             },
           ],
         },

@@ -20,6 +20,7 @@ export type Settings = Record<string, unknown> & {
   version?: string
   footerNote?: string
   marqueeWords?: { word: string }[]
+  projectsLayout?: { layout?: 'grid' | 'bento' | 'list'; columnsDesktop?: number; columnsTablet?: number; columnsMobile?: number }
 }
 
 export async function getPayloadClient() {
@@ -64,6 +65,7 @@ export type ProjectDoc = {
   image?: { url?: string; filename?: string; alt?: string }
   imageAlt?: string
   bannerStyle?: 'ink' | 'lime'
+  size?: 'normal' | 'wide' | 'tall'
   demoUrl?: string
   codeUrl?: string
 }
