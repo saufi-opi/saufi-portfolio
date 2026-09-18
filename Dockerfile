@@ -15,7 +15,10 @@ ENV PAYLOAD_SECRET=build-placeholder
 ENV DATABASE_URI=file:./data/build-placeholder.db
 ENV MEDIA_DIR=data/build-media
 # build needs ./data to exist; the SEEDED db (repo data/) is preserved separately for first-boot
-RUN cp -r data /app/seed-data && rm -rf data && mkdir -p data && npm run build
+# (data/ is gitignored — in CI fresh checkouts it's absent, so seed an EMPTY dir; entrypoint's
+# `-s` check skips seeding an empty dir and the app initializes its own schema on boot)
+RUN cp -r data /app/seed-data 2>/dev/null || mkdir -p /app/seed-data; \
+    rm -rf data && mkdir -p data && npm run build
 
 FROM node:22-alpine AS runner
 WORKDIR /app
