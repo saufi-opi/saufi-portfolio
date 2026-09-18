@@ -17,7 +17,7 @@ DB=/app/data/payload.db
 if [ -s "$DB" ] && command -v sqlite3 >/dev/null 2>&1; then
   has_col() { sqlite3 "$DB" "SELECT COUNT(*) FROM pragma_table_info('$2') WHERE name='$3';" | grep -q '^1$'; }
   ALTERS=''
-  has_col "$DB" projects size            || ALTERS="$ALTERS ALTER TABLE projects ADD COLUMN size TEXT NOT NULL DEFAULT 'normal';"
+  has_col "$DB" projects size            || ALTERS="$ALTERS ALTER TABLE projects ADD COLUMN size TEXT DEFAULT NULL;"
   has_col "$DB" site_settings projects_layout_layout           || ALTERS="$ALTERS ALTER TABLE site_settings ADD COLUMN projects_layout_layout TEXT NOT NULL DEFAULT 'bento';"
   has_col "$DB" site_settings projects_layout_columns_desktop  || ALTERS="$ALTERS ALTER TABLE site_settings ADD COLUMN projects_layout_columns_desktop REAL NOT NULL DEFAULT 2;"
   has_col "$DB" site_settings projects_layout_columns_tablet   || ALTERS="$ALTERS ALTER TABLE site_settings ADD COLUMN projects_layout_columns_tablet REAL NOT NULL DEFAULT 2;"
