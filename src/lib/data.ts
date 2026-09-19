@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+import { getPayload, type Where } from 'payload'
 import config from '../payload.config'
 
 export type Settings = Record<string, unknown> & {
@@ -100,7 +100,7 @@ export const POSTS_PER_PAGE = 9
 
 export async function getPosts(page = 1, q?: string) {
   const payload = await getPayloadClient()
-  const where = q
+  const where: Where = q
     ? {
         and: [
           { published: { equals: true } },
