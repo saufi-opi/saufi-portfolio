@@ -18,6 +18,13 @@ if [ -s "$DB" ] && command -v sqlite3 >/dev/null 2>&1; then
   has_col() { sqlite3 "$DB" "SELECT COUNT(*) FROM pragma_table_info('$2') WHERE name='$3';" | grep -q '^1$'; }
   has_table() { sqlite3 "$DB" "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='$1';" | grep -q '^1$'; }
   ALTERS=''
+  # Blog feature: existing volumes predate the posts collection — create its
+  # tables FIRST so later has_col checks (posts.hide_cover) don't fail under
+  # `set -e` when the table doesn't exist yet.
+  if ! has_table posts; then
+    echo "[entrypoint] applying blog migration"
+    sqlite3 "$DB" < /app/scripts/migrate-blog.sql
+  fi
   has_col "$DB" projects size            || ALTERS="$ALTERS ALTER TABLE projects ADD COLUMN size TEXT DEFAULT NULL;"
 
   has_col "$DB" site_settings projects_layout_layout           || ALTERS="$ALTERS ALTER TABLE site_settings ADD COLUMN projects_layout_layout TEXT NOT NULL DEFAULT 'bento';"
@@ -32,11 +39,6 @@ if [ -s "$DB" ] && command -v sqlite3 >/dev/null 2>&1; then
   if [ -n "$ALTERS" ]; then
     echo "[entrypoint] applying layout migration"
     sqlite3 "$DB" "$ALTERS"
-  fi
-  # Blog feature: existing volumes predate the posts collection — create its tables once.
-  if ! has_table posts; then
-    echo "[entrypoint] applying blog migration"
-    sqlite3 "$DB" < /app/scripts/migrate-blog.sql
   fi
   # Analytics feature: volumes predating page-views analytics — create its table once.
   if ! has_table page_views; then
