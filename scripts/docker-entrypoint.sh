@@ -25,6 +25,15 @@ if [ -s "$DB" ] && command -v sqlite3 >/dev/null 2>&1; then
     echo "[entrypoint] applying blog migration"
     sqlite3 "$DB" < /app/scripts/migrate-blog.sql
   fi
+  # Blog + analytics rels columns: volumes seeded from older bundled seeds
+  # predate posts_id/page_views_id on the polymorphic rels table. The admin
+  # panel queries this table on every load and 500s without them (real
+  # 2026-09-19: digest 2262852728). Only patch when the table already exists —
+  # a missing table means the app initializes fresh schema on boot.
+  if has_table payload_locked_documents_rels; then
+    has_col "$DB" payload_locked_documents_rels posts_id      || ALTERS="$ALTERS ALTER TABLE payload_locked_documents_rels ADD COLUMN posts_id integer;"
+    has_col "$DB" payload_locked_documents_rels page_views_id || ALTERS="$ALTERS ALTER TABLE payload_locked_documents_rels ADD COLUMN page_views_id integer;"
+  fi
   has_col "$DB" projects size            || ALTERS="$ALTERS ALTER TABLE projects ADD COLUMN size TEXT DEFAULT NULL;"
 
   has_col "$DB" site_settings projects_layout_layout           || ALTERS="$ALTERS ALTER TABLE site_settings ADD COLUMN projects_layout_layout TEXT NOT NULL DEFAULT 'bento';"
