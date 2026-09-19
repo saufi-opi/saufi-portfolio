@@ -492,7 +492,7 @@ footer .marquee { background: var(--ink-700); color: var(--tx-on-dark-soft); }
   letter-spacing: -.04em; color: var(--tx-on-dark);
 }
 .wordmark .lime-part { color: var(--tx-on-dark-mute); }
-.footer-note { display: block; font-size: 12px; color: var(--tx-on-dark-mute); margin-top: var(--s-4); }
+.footer-note { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; color: var(--tx-on-dark-mute); margin-top: var(--s-4); }
 .footer-arrow { position: absolute; top: var(--s-16); right: var(--gutter); font-size: clamp(2rem, 6vw, 4rem); color: var(--tx-on-dark-mute); }
 
 /* ===== GLOBAL REDUCED-MOTION KILL SWITCH ===== */
@@ -543,6 +543,16 @@ footer .marquee { background: var(--ink-700); color: var(--tx-on-dark-soft); }
   font-size: 0.9rem; color: var(--tx-on-light-mute); margin: 0; line-height: 1.6;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
+/* view counter: quiet eye + number, bottom-right of card body, distinct from tag chips */
+.post-views {
+  margin-top: auto; align-self: flex-end;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: var(--fs-micro); font-weight: 500; line-height: 1;
+  color: var(--tx-on-light-mute);
+}
+.post-views svg { opacity: .8; }
+.footer-views { display: inline-flex; align-items: center; gap: 5px; font-weight: 500; line-height: 1; }
+.footer-views svg { opacity: .8; }
 .blog-empty { text-align: center; color: var(--tx-on-light-mute); }
 
 /* Search bar */

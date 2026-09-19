@@ -210,3 +210,12 @@ export async function getViewCounts(slugs: string[]): Promise<Record<string, num
   )
   return Object.fromEntries(entries)
 }
+
+// Whole-site total: every page-views row is one unique visitor per path per
+// UTC day, so COUNT(*) is site-wide views on the same semantics as the post
+// counters (same visitor on two paths counts twice).
+export async function getTotalViews(): Promise<number> {
+  const payload = await getPayloadClient()
+  const { totalDocs } = await payload.count({ collection: 'page-views' })
+  return totalDocs
+}
