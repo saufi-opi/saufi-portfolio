@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getPosts, getSettings, type PostDoc } from '@/lib/data'
+import { getPosts, getSettings, getViewCounts, type PostDoc } from '@/lib/data'
 
 export const revalidate = 60
 // Prerender at build needs a live DB; in CI there's no seeded data (same rationale as page.tsx).
@@ -29,6 +29,7 @@ export default async function BlogPage({ searchParams }: Props) {
   const q = qParam?.trim() || ''
   const requested = Math.max(1, Number.parseInt(pageParam || '1', 10) || 1)
   const { posts, totalDocs, totalPages, page } = await getPosts(requested, q || undefined)
+  const viewCounts = await getViewCounts(posts.map((p) => p.slug))
   const title = s?.blogTitle || 'Blog'
   const subtitle = s?.blogSubtitle || 'Notes on AI engineering, full-stack development, and lessons learned shipping software.'
   const baseHref = q ? `/blog?q=${encodeURIComponent(q)}` : '/blog'
@@ -67,7 +68,7 @@ export default async function BlogPage({ searchParams }: Props) {
             <>
               <div className="blog-grid">
                 {posts.map((post) => (
-                  <PostCard key={post.id} post={post} />
+                  <PostCard key={post.id} post={post} views={viewCounts[post.slug] ?? 0} />
                 ))}
               </div>
               {totalPages > 1 && (
@@ -89,7 +90,7 @@ export default async function BlogPage({ searchParams }: Props) {
   )
 }
 
-function PostCard({ post }: { post: PostDoc }) {
+function PostCard({ post, views }: { post: PostDoc; views: number }) {
   const cover = typeof post.cover === 'object' ? post.cover : undefined
   return (
     <a href={`/blog/${post.slug}`} className="card card--light post-card fade-in">
@@ -113,6 +114,15 @@ function PostCard({ post }: { post: PostDoc }) {
         </div>
         <h3 className="post-title">{post.title}</h3>
         {post.excerpt && <p className="post-excerpt">{post.excerpt}</p>}
+        {views > 0 && (
+          <span className="post-views" title={`${views} views`}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            {views}
+          </span>
+        )}
       </div>
     </a>
   )

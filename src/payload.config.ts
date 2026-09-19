@@ -11,13 +11,14 @@ import { Experience } from './collections/Experience'
 import { Services } from './collections/Services'
 import { SkillCategories } from './collections/SkillCategories'
 import { Posts } from './collections/Posts'
+import { PageViews } from './collections/PageViews'
 
 const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'dev-secret-change-me',
   editor: lexicalEditor(),
-  collections: [Media, Users, Projects, Experience, Services, SkillCategories, Posts],
+  collections: [Media, Users, Projects, Experience, Services, SkillCategories, Posts, PageViews],
   globals: [SiteSettings],
   typescript: { outputFile: 'payload-types.ts' },
   db: sqliteAdapter({

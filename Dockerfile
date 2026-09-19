@@ -37,6 +37,7 @@ COPY --from=build /app/seed-data /app/seed
 COPY scripts/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY scripts/migrate-layout.sql /app/scripts/migrate-layout.sql
 COPY scripts/migrate-blog.sql /app/scripts/migrate-blog.sql
+COPY scripts/migrate-analytics.sql /app/scripts/migrate-analytics.sql
 RUN chmod +x /usr/local/bin/entrypoint.sh && mkdir -p /app/data && chown -R nextjs:nodejs /app
 USER nextjs
 EXPOSE 3000

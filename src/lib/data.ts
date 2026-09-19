@@ -153,3 +153,60 @@ export function readingTime(content?: SerializedLexical | null): number {
   walk(content.root)
   return Math.max(1, Math.round(words / 200))
 }
+
+// ---------------------------------------------------------------------------
+// Analytics (page-views collection)
+// ---------------------------------------------------------------------------
+
+// Record a pageview. The dedupeKey unique index makes repeat views by the same
+// visitor/path/day fail on insert — that failure IS the "already counted"
+// outcome, so any insert error is swallowed and reported as not-counted.
+export async function trackPageView(args: { path: string; visitorHash: string; day: string }): Promise<boolean> {
+  const payload = await getPayloadClient()
+  try {
+    await payload.create({
+      collection: 'page-views',
+      depth: 0,
+      data: {
+        path: args.path,
+        visitorHash: args.visitorHash,
+        day: args.day,
+        dedupeKey: `${args.visitorHash}:${args.path}:${args.day}`,
+      },
+    })
+    return true
+  } catch {
+    // Unique-constraint violation (same visitor + path + day) or transient
+    // failure — either way the caller only needs "did we count it".
+    return false
+  }
+}
+
+// Total unique visitor-days for one blog post path. Because every page-views
+// row is already deduped by (visitor, path, day), COUNT(*) per path is the
+// view count.
+export async function getPostViews(slug: string): Promise<number> {
+  const payload = await getPayloadClient()
+  const { totalDocs } = await payload.count({
+    collection: 'page-views',
+    where: { path: { equals: `/blog/${slug}` } },
+  })
+  return totalDocs
+}
+
+// View counts for a list of posts (blog listing page). One count query per
+// slug, run in parallel — cheap on local SQLite and avoids raw SQL.
+export async function getViewCounts(slugs: string[]): Promise<Record<string, number>> {
+  if (slugs.length === 0) return {}
+  const payload = await getPayloadClient()
+  const entries = await Promise.all(
+    slugs.map(async (slug) => {
+      const { totalDocs } = await payload.count({
+        collection: 'page-views',
+        where: { path: { equals: `/blog/${slug}` } },
+      })
+      return [slug, totalDocs] as const
+    }),
+  )
+  return Object.fromEntries(entries)
+}

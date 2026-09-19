@@ -38,6 +38,11 @@ if [ -s "$DB" ] && command -v sqlite3 >/dev/null 2>&1; then
     echo "[entrypoint] applying blog migration"
     sqlite3 "$DB" < /app/scripts/migrate-blog.sql
   fi
+  # Analytics feature: volumes predating page-views analytics — create its table once.
+  if ! has_table page_views; then
+    echo "[entrypoint] applying analytics migration"
+    sqlite3 "$DB" < /app/scripts/migrate-analytics.sql
+  fi
 fi
 
 # sqlite needs write access; volume may be owned by host uid (1000)

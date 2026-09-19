@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { SerializedEditorState } from 'lexical'
 import { RichText } from '@payloadcms/richtext-lexical/react'
-import { getPostBySlug, getSettings, readingTime } from '@/lib/data'
+import { getPostBySlug, getPostViews, getSettings, readingTime } from '@/lib/data'
 
 export const revalidate = 60
 // Prerender at build needs a live DB; in CI there's no seeded data (same rationale as page.tsx).
@@ -47,6 +47,7 @@ export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
   const [post, settings] = await Promise.all([getPostBySlug(slug), getSettings()])
   if (!post) notFound()
+  const views = await getPostViews(slug)
 
   const cover = typeof post.cover === 'object' ? post.cover : undefined
   const minutes = readingTime(post.content)
@@ -69,6 +70,7 @@ export default async function BlogPostPage({ params }: Props) {
             {published && <time dateTime={post.publishedAt}>{published}</time>}
             {published && ' · '}
             {minutes} min read
+            {views > 0 && ` · ${views} view${views === 1 ? '' : 's'}`}
             {post.author ? ` · ${post.author}` : ''}
           </p>
         </div>
