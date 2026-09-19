@@ -1,12 +1,14 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 const LINKS = [
-  { href: '#services', label: 'Skills' },
-  { href: '#projects', label: 'Projects' },
-  { href: '#timeline', label: 'Experience' },
-  { href: '#contact', label: 'Contact' },
+  { href: '/#services', label: 'Skills' },
+  { href: '/#projects', label: 'Projects' },
+  { href: '/#timeline', label: 'Experience' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/#contact', label: 'Contact' },
 ]
 
 export default function Nav() {
@@ -14,6 +16,8 @@ export default function Nav() {
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState('')
   const progressRef = useRef<HTMLSpanElement>(null)
+  const pathname = usePathname()
+  const onBlog = pathname?.startsWith('/blog') ?? false
 
   useEffect(() => {
     document.body.classList.toggle('nav-open', open)
@@ -33,10 +37,18 @@ export default function Nav() {
   }, [])
 
   useEffect(() => {
+    // On sub-routes (e.g. /blog) there are no in-page sections to spy on;
+    // highlight the route link instead and skip the observer entirely.
+    if (onBlog) {
+      setActive('/blog')
+      return
+    }
+    setActive('')
     const spy = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive('#' + entry.target.id)
+          // LINKS use '/#section' hrefs, so store the same shape for className matching.
+          if (entry.isIntersecting) setActive('/#' + entry.target.id)
         })
       },
       { rootMargin: '-40% 0px -55% 0px' },
@@ -46,7 +58,7 @@ export default function Nav() {
       if (el) spy.observe(el)
     })
     return () => spy.disconnect()
-  }, [])
+  }, [onBlog])
 
   return (
     <>
@@ -55,17 +67,16 @@ export default function Nav() {
       </div>
       <nav className={scrolled ? 'is-scrolled' : ''}>
         <div className="nav-inner">
-          <a href="#hero" className="nav-brand">
+          <a href="/#hero" className="nav-brand">
             &lt;AhmadSaufi<span> /&gt;</span>
           </a>
           <div className="nav-links">
             {LINKS.map((l) => (
               <a key={l.href} href={l.href} className={active === l.href ? 'active' : ''}>
                 {l.label}
-              </a>
-            ))}
+              </a>            ))}
           </div>
-          <a href="#contact" className="pill pill--lime pill--sm nav-cta">
+          <a href="/#contact" className="pill pill--lime pill--sm nav-cta">
             Get in Touch <span className="arrow" aria-hidden="true">↗</span>
           </a>
           <button

@@ -157,6 +157,97 @@ async function main() {
     console.log('seed: experience x2')
   }
 
+  if ((await totalDocs('posts')) === 0) {
+    // Lexical serialized editor state (shape matches what the admin editor saves).
+    const T = (text, format = 0) => ({ type: 'text', version: 1, mode: 'normal', detail: 0, format, style: '', text })
+    const H = (tag, text) => ({ type: 'heading', version: 1, tag, format: '', indent: 0, direction: null, children: [T(text)] })
+    const P = (...children) => ({ type: 'paragraph', version: 1, format: '', indent: 0, direction: null, textFormat: 0, textStyle: '', children })
+    const LI = (text) => ({ type: 'listitem', version: 1, format: '', indent: 0, direction: null, value: 1, checked: false, children: [T(text)] })
+    const UL = (...items) => ({ type: 'list', version: 1, format: '', indent: 0, direction: null, listType: 'bullet', start: 1, tag: 'ul', children: items })
+    const BQ = (...children) => ({ type: 'quote', version: 1, format: '', indent: 0, direction: null, children })
+    const root = (...children) => ({ root: { type: 'root', version: 1, format: '', indent: 0, direction: null, children } })
+    const posts = [
+      {
+        title: 'Building a Production RAG Pipeline: Lessons Learned',
+        slug: 'building-a-production-rag-pipeline',
+        excerpt: 'What actually matters when taking a RAG system from prototype to production — document parsing, chunking strategy, and the infra nobody warns you about.',
+        content: root(
+          P(T('Retrieval-Augmented Generation looks deceptively simple in a demo: embed some documents, stuff them into a prompt, and the model does the rest. The gap between that prototype and something you can trust in production is where most of the real engineering lives.')),
+          H('h2', 'Parsing is the foundation'),
+          P(T('Your retrieval quality is capped by your parsing quality. If the parser mangles tables, loses headings, or merges pages, no amount of vector-database tuning will save you. We run multi-worker document parsing so a hung PDF never stalls the queue.')),
+          UL(
+            LI('Normalize early: strip layout noise before chunking, not after.'),
+            LI('Keep the document structure — headings are retrieval gold.'),
+            LI('Track per-document parse failures as a first-class metric.'),
+          ),
+          H('h2', 'Chunking is a retrieval problem, not a text problem'),
+          P(T('Chunks that read well to a human often retrieve poorly. Overlap helps, but structure-aware splitting — respecting sections and tables — helped us more than any embedding swap.')),
+          BQ(T('Measure retrieval before you tune the model. If the right passage is not in the context window, no prompt will fix it.')),
+          H('h2', 'What I would do again'),
+          P(T('Start with evaluation from day one. A small golden set of questions with known source documents gives you a regression harness for every pipeline change — and it pays for itself the first time you swap an embedding model.')),
+        ),
+        tags: ['RAG', 'AI Engineering', 'Lessons Learned'],
+        cover: 'proj-rag.jpg',
+        coverAlt: 'Isometric render of documents flowing through a pipeline into a vector database',
+        publishedAt: '2025-08-12T09:00:00.000Z',
+      },
+      {
+        title: 'Agentic AI Workflows Without the Hype',
+        slug: 'agentic-ai-workflows-without-the-hype',
+        excerpt: 'Agents are powerful but easy to overbuild. A field guide to deciding when a plain function call beats a multi-step autonomous loop.',
+        content: root(
+          P(T('The current agent discourse oscillates between "agents will replace everything" and "agents are a scam". The truth, as usual, is that they are a tool with a narrow band of problems where they shine.')),
+          H('h2', 'When an agent earns its keep'),
+          P(T('Agents pay off when the path to the goal is not knowable in advance: open-ended research, tool selection across messy APIs, human-in-the-loop triage. For anything with a fixed workflow, a plain pipeline is faster, cheaper, and easier to debug.')),
+          UL(
+            LI('Fixed steps, known tools → write a function.'),
+            LI('Variable steps, unknown order → consider an agent.'),
+            LI('Either way → log every tool call and make it replayable.'),
+          ),
+          H('h2', 'The boring stack wins'),
+          P(T('Structured outputs, a retry policy, and good tracing get you 80% of what autonomous planning promises — without the nondeterminism. Reach for the agent only when that 20% actually matters.')),
+        ),
+        tags: ['Agentic AI', 'LLM', 'Engineering'],
+        cover: 'proj-pdfhero.jpg',
+        coverAlt: 'Stack of document pages with lime spark trail',
+        publishedAt: '2025-09-03T09:00:00.000Z',
+      },
+      {
+        title: 'Shipping a Solo Product: From Side Project to Deployed',
+        slug: 'shipping-a-solo-product',
+        excerpt: 'The unglamorous checklist that takes a portfolio project from "works on my machine" to a deployed app with CI, containers, and a migration story.',
+        content: root(
+          P(T('Every side project starts the same way: a working demo, zero infrastructure. The distance between that and a deployed product is not code — it is the boring parts. Here is the checklist I now run before calling anything shipped.')),
+          H('h2', 'The checklist'),
+          UL(
+            LI('CI that builds the real artifact — not just the tests.'),
+            LI('Container images built from the same dependency lockfile.'),
+            LI('A schema story for existing data, not just fresh installs.'),
+            LI('A smoke test that fails loudly when the app cannot boot.'),
+          ),
+          H('h2', 'Schema changes are the real deadline'),
+          P(T('Fresh databases get schemas for free. Existing deployments never do. Planning the migration before you add the feature turns a stressful deploy into a one-line entrypoint change — and teaches you what your data actually looks like.')),
+          P(T('None of this is glamorous. All of it is the difference between a demo and a product.')),
+        ),
+        tags: ['DevOps', 'CI/CD', 'Docker'],
+        cover: 'proj-canopy.jpg',
+        coverAlt: 'Smartphone under a glowing hexagonal canopy dome',
+        publishedAt: '2025-09-15T09:00:00.000Z',
+      },
+    ]
+    for (const p of posts)
+      await api('POST', '/api/posts', {
+        token,
+        json: {
+          title: p.title, slug: p.slug, excerpt: p.excerpt, content: p.content,
+          tags: p.tags.map((tag) => ({ tag })),
+          cover: mediaIds[p.cover], coverAlt: p.coverAlt,
+          author: 'Ahmad Saufi', publishedAt: p.publishedAt, published: true,
+        },
+      })
+    console.log('seed: posts x3')
+  }
+
   // 4. site settings global (Payload 3 globals update = POST with full payload)
   const settings = await api('GET', '/api/globals/site-settings?depth=0', { token })
   if (!settings.heroImage) {

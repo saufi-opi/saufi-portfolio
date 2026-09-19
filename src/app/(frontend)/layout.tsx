@@ -4,6 +4,7 @@ import { getPayload } from 'payload'
 import config from '../../payload.config'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import ScrollReveal from '@/components/ScrollReveal'
 import { getSettings } from '@/lib/data'
 import '../globals.css'
 
@@ -42,6 +43,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body>
         <div className="grain" aria-hidden="true" />
+        <ScrollReveal />
         <Nav />
         {children}
         <Footer />

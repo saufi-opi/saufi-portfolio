@@ -76,6 +76,31 @@ export const SiteSettings: GlobalConfig = {
           ],
         },
         {
+          label: 'Blog',
+          fields: [
+            { name: 'blogTitle', type: 'text', defaultValue: 'Blog', admin: { description: 'Heading shown on the /blog listing page' } },
+            { name: 'blogSubtitle', type: 'textarea', defaultValue: 'Notes on AI engineering, full-stack development, and lessons learned shipping software.', admin: { description: 'Description shown under the heading on /blog' } },
+            {
+              name: 'blogCoverHeight',
+              type: 'number',
+              label: 'Post cover height (px)',
+              defaultValue: 320,
+              min: 120,
+              max: 720,
+              admin: { description: 'Height of the cover image on the post page in pixels (listing cards are fixed separately). Default 320.' },
+            },
+            {
+              name: 'blogContentWidth',
+              type: 'number',
+              label: 'Post content width (px)',
+              defaultValue: 840,
+              min: 640,
+              max: 1200,
+              admin: { description: 'Max width of the post page box that holds the title, cover and article body. Default 840.' },
+            },
+          ],
+        },
+        {
           label: 'SEO',
           fields: [
             { name: 'metaTitle', type: 'text', defaultValue: 'Ahmad Saufi | Software & AI Engineer' },

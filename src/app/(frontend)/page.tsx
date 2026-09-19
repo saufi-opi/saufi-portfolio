@@ -3,7 +3,6 @@ import type { CSSProperties } from 'react'
 import { getSettings, getServices, getSkills, getProjects, getExperience } from '@/lib/data'
 import ParticleNet from '@/components/ParticleNet'
 import Typewriter from '@/components/Typewriter'
-import ScrollReveal from '@/components/ScrollReveal'
 import { CountUp, TiltGlow, Accordion } from '@/components/anim'
 import { Icon } from '@/components/Icon'
 
@@ -45,7 +44,6 @@ export default async function Home() {
 
   return (
     <main>
-      <ScrollReveal />
       <TiltGlow />
       <Accordion />
 
