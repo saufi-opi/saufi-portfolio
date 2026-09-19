@@ -551,8 +551,7 @@ footer .marquee { background: var(--ink-700); color: var(--tx-on-dark-soft); }
   color: var(--tx-on-light-mute);
 }
 .post-views svg { opacity: .8; }
-.footer-views { display: inline-flex; align-items: center; gap: 5px; font-weight: 500; line-height: 1; }
-.footer-views svg { opacity: .8; }
+.footer-views { font-weight: 500; line-height: 1; margin-left: auto; color: var(--tx-on-dark-soft); }
 .blog-empty { text-align: center; color: var(--tx-on-light-mute); }
 
 /* Search bar */
